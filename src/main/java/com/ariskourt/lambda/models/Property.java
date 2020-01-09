@@ -1,0 +1,23 @@
+package com.ariskourt.lambda.models;
+
+public enum Property {
+
+    DATASOURCE_URL,
+
+    DATASOURCE_USERNAME,
+
+    DATASOURCE_PASSWORD,
+
+    DATASOURCE_MIN_IDLE_CONNECTIONS,
+
+    DATASOURCE_MAX_IDLE_CONNECTION,
+
+    DATASOURCE_MAX_OPEN_STATEMENTS,
+
+    AWS_ACCESS_KEY,
+
+    AWS_ACCESS_SECRET,
+
+    AWS_BUCKET_REGION;
+
+}
