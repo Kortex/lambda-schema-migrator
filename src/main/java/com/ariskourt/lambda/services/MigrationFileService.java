@@ -5,20 +5,19 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.ariskourt.lambda.clients.S3Client;
 import com.ariskourt.lambda.exceptions.MigrationFileFetchingException;
+import com.ariskourt.lambda.utils.FunctionalLocker;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class MigrationFileService {
 
-    private static final Lock INIT_LOCK = new ReentrantLock();
+    private static final FunctionalLocker LOCKER = FunctionalLocker.create();
 
     private static MigrationFileService instance;
 
@@ -35,12 +34,7 @@ public class MigrationFileService {
 
     public static MigrationFileService getInstance() {
         if (instance == null) {
-            INIT_LOCK.lock();
-            try {
-		instance = new MigrationFileService();
-	    } finally {
-                INIT_LOCK.unlock();
-	    }
+           LOCKER.doLocked(() -> instance = new MigrationFileService());
 	}
         return instance;
     }

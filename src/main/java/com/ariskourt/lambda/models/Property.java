@@ -18,6 +18,8 @@ public enum Property {
 
     AWS_ACCESS_SECRET,
 
-    AWS_BUCKET_REGION;
+    AWS_BUCKET_REGION,
+
+    FLYWAY_CONNECT_RETRIES
 
 }

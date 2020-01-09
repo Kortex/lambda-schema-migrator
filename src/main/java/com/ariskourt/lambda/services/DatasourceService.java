@@ -1,20 +1,16 @@
 package com.ariskourt.lambda.services;
 
 import com.ariskourt.lambda.models.Property;
+import com.ariskourt.lambda.utils.FunctionalLocker;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import javax.sql.DataSource;
-
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DatasourceService {
 
-    private static final Lock INIT_LOCK = new ReentrantLock();
+    private static final FunctionalLocker LOCKER = FunctionalLocker.create();
 
     private static DatasourceService instance;
 
@@ -32,12 +28,7 @@ public class DatasourceService {
      */
     public static DatasourceService getInstance() {
         if (instance == null) {
-            INIT_LOCK.lock();
-            try {
-                instance = new DatasourceService();
-            } finally {
-                INIT_LOCK.unlock();
-            }
+           LOCKER.doLocked(() -> instance = new DatasourceService());
         }
         return instance;
     }

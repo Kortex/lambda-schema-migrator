@@ -2,10 +2,9 @@ package com.ariskourt.lambda.services;
 
 import com.ariskourt.lambda.exceptions.MissingPropertyException;
 import com.ariskourt.lambda.models.Property;
+import com.ariskourt.lambda.utils.FunctionalLocker;
 
 import java.util.Optional;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /***
  * A service allowing to access system environment defined properties. Properties should be set using their respective
@@ -13,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class PropertyService {
 
-    private static final Lock INIT_LOCK = new ReentrantLock();
+    private static final FunctionalLocker LOCKER = FunctionalLocker.create();
 
     private static PropertyService instance;
 
@@ -26,12 +25,7 @@ public class PropertyService {
      */
     public static PropertyService getInstance() {
 	if (instance == null) {
-	    INIT_LOCK.lock();
-	    try {
-		instance = new PropertyService();
-	    } finally {
-		INIT_LOCK.unlock();
-	    }
+	    LOCKER.doLocked(() -> instance = new PropertyService());
 	}
 	return instance;
     }
